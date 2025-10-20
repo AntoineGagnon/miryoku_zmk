@@ -1,0 +1,27 @@
+version: 1
+folders:
+  - name: "Build Examples"
+    workflows:
+      - "build-example-corne-nice_nano-display.yml"
+      - "build-example-corne-nice_nano_v2-nice_view.yml"
+      - "build-example-corneish_zen-custom.yml"
+      - "build-example-corneish_zen_v1.yml"
+      - "build-example-mouse.yml"
+      - "build-example-soft_off.yml"
+      - "build-example-tbkmini-nice_nano_v2.yml"
+      - "build-example-xmk-native_posix_64.yml"
+      - "build-example-xmk-xmk.yml"
+  - name: "Build Process"
+    workflows:
+      - "build-inputs.yml"
+      - "main.yml"
+  - name: "Testing"
+    workflows:
+      - "test-all-boards.yml"
+      - "test-all-configs.yml"
+      - "test-all-promicro-controllers.yml"
+      - "test-all-promicro-shields.yml"
+      - "test-all-xiao-controllers.yml"
+      - "test-all-xiao-shields.yml"
+      - "test-build.yml"
+      - "test-inputs.yml"
