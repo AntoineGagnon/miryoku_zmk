@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Generate clean Temper TPS43 Interposer PCB with proper library footprints."""
+"""Generate clean Temper TPS43 Interposer PCB.
+
+Uses two 1x12 pin headers (JP1 left, JP2 right), one FFC connector,
+and two pull-up resistors.  Nets are pre-assigned to pads; the user
+routes traces manually with KiCad's interactive router.
+"""
 
 import uuid, os
 
@@ -10,18 +15,25 @@ OUT = os.path.join(HERE, "temper-tps43-interposer.kicad_pcb")
 def U():
     return str(uuid.uuid4())
 
-# ── Geometry ───────────────────────────────────────────────────────────
-PP = 2.54
-RS = 15.24
-P1Y = 12.7
-J1X = -RS / 2
-J2X = RS / 2
-# Board dimensions — must encompass all pins + FFC + resistors
-BW = 34.0
-BH = 44.0
-# Center Y so that the pin area is centered on the board
-CY = 1.5  # board Y center offset (positive shifts board up to cover FFC/resistors)
+# ── Geometry ──
+PP = 2.54          # pin pitch
+RS = 15.24         # row spacing
+BW = 34.0          # board width
+BH = 44.0          # board height (fits all pins + FFC + resistors)
+CY = 1.5           # board Y centre offset (positive = shifted up)
+P1Y = 12.7         # Y of pin 1 (topmost)
+J1X = -RS / 2      # JP1 X centre
+J2X = RS / 2       # JP2 X centre
 
+# ── Library footprint references ──
+HEADER_FP = "Connector_PinHeader_2.54mm:PinHeader_1x12_P2.54mm_Vertical"
+RES_FP    = "Resistor_SMD:R_0805_2012Metric"
+FFC_FP    = "temper-tps43-interposer:TPS43_FFC_06"
+
+# ── Net IDs ──
+NETS = {"GND": 1, "VCC": 2, "SDA": 3, "SCL": 4, "RDY": 5, "RST": 6}
+
+# ── Pin labels ──
 LEFT = {
     1: "D1", 2: "D0", 3: "GND", 4: "GND", 5: "D2", 6: "D3",
     7: "D4", 8: "D5", 9: "D6", 10: "D7", 11: "D8", 12: "D9",
@@ -31,24 +43,18 @@ RIGHT = {
     7: "D19", 8: "D18", 9: "D15", 10: "D14", 11: "D16", 12: "D10",
 }
 
-def pnet(label):
-    if label == "VCC":
-        return 2
-    if label == "GND":
-        return 1
-    m = {"D8": 3, "D9": 4, "D10": 5, "D16": 6}
+def pin_net(label):
+    if label == "VCC": return NETS["VCC"]
+    if label == "GND": return NETS["GND"]
+    m = {"D8": NETS["SDA"], "D9": NETS["SCL"],
+         "D10": NETS["RDY"], "D16": NETS["RST"]}
     return m.get(label, 0)
 
-# Library references
-PIN_FP = "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical"
-RES_FP = "Resistor_SMD:R_0805_2012Metric"
-FFC_FP = "temper-tps43-interposer:TPS43_FFC_06"
-
-# ── Build ──────────────────────────────────────────────────────────────
+# ── Build ──
 lines = []
 A = lines.append
 
-# Header (exact KiCAD 9 format)
+# ----- header (KiCad 9 format) -----
 A("(kicad_pcb")
 A(TAB + '(version 20241229)')
 A(TAB + '(generator "pcbnew")')
@@ -59,37 +65,31 @@ A(TAB + TAB + "(legacy_teardrops no)")
 A(TAB + ")")
 A(TAB + '(paper "A4")')
 
+# layers
 A(TAB + "(layers")
 for s in [
-    TAB + TAB + '(0 "F.Cu" signal)',
-    TAB + TAB + '(2 "B.Cu" signal)',
+    TAB + TAB + '(0 "F.Cu" signal)',          TAB + TAB + '(2 "B.Cu" signal)',
     TAB + TAB + '(9 "F.Adhes" user "F.Adhesive")',
     TAB + TAB + '(11 "B.Adhes" user "B.Adhesive")',
-    TAB + TAB + '(13 "F.Paste" user)',
-    TAB + TAB + '(15 "B.Paste" user)',
+    TAB + TAB + '(13 "F.Paste" user)',        TAB + TAB + '(15 "B.Paste" user)',
     TAB + TAB + '(5 "F.SilkS" user "F.Silkscreen")',
     TAB + TAB + '(7 "B.SilkS" user "B.Silkscreen")',
-    TAB + TAB + '(1 "F.Mask" user)',
-    TAB + TAB + '(3 "B.Mask" user)',
+    TAB + TAB + '(1 "F.Mask" user)',          TAB + TAB + '(3 "B.Mask" user)',
     TAB + TAB + '(17 "Dwgs.User" user "User.Drawings")',
     TAB + TAB + '(19 "Cmts.User" user "User.Comments")',
     TAB + TAB + '(21 "Eco1.User" user "User.Eco1")',
     TAB + TAB + '(23 "Eco2.User" user "User.Eco2")',
-    TAB + TAB + '(25 "Edge.Cuts" user)',
-    TAB + TAB + '(27 "Margin" user)',
+    TAB + TAB + '(25 "Edge.Cuts" user)',      TAB + TAB + '(27 "Margin" user)',
     TAB + TAB + '(31 "F.CrtYd" user "F.Courtyard")',
     TAB + TAB + '(29 "B.CrtYd" user "B.Courtyard")',
-    TAB + TAB + '(35 "F.Fab" user)',
-    TAB + TAB + '(33 "B.Fab" user)',
-    TAB + TAB + '(39 "User.1" user)',
-    TAB + TAB + '(41 "User.2" user)',
-    TAB + TAB + '(43 "User.3" user)',
-    TAB + TAB + '(45 "User.4" user)',
+    TAB + TAB + '(35 "F.Fab" user)',          TAB + TAB + '(33 "B.Fab" user)',
+    TAB + TAB + '(39 "User.1" user)',         TAB + TAB + '(41 "User.2" user)',
+    TAB + TAB + '(43 "User.3" user)',         TAB + TAB + '(45 "User.4" user)',
 ]:
     A(s)
 A(TAB + ")")
 
-# Setup
+# setup
 for s in [
     TAB + "(setup",
     TAB + TAB + "(pad_to_mask_clearance 0)",
@@ -138,207 +138,133 @@ for s in [
 ]:
     A(s)
 
-# Nets
-for nm, nid in [("GND", 1), ("VCC", 2), ("SDA", 3), ("SCL", 4), ("RDY", 5), ("RST", 6)]:
-    A(TAB + f'(net {nid} "{nm}")')
+# nets
+for name, nid in NETS.items():
+    A(TAB + f'(net {nid} "{name}")')
 A(TAB + '(net 0 "")')
 
+# ── Helpers ──────────────────────────────────────────────────────────
+def prop(name, value, x, y, layer, hide=False):
+    A(TAB + TAB + f'(property "{name}" "{value}"')
+    A(TAB + TAB + TAB + f"(at {x:.2f} {y:.2f} 0)")
+    A(TAB + TAB + TAB + f'(layer "{layer}")')
+    if hide:
+        A(TAB + TAB + TAB + "(hide yes)")
+    A(TAB + TAB + TAB + f'(uuid "{U()}")')
+    A(TAB + TAB + TAB + "(effects (font (size 1 1) (thickness 0.15)))")
+    A(TAB + TAB + ")")
 
-def footprint(libid, uuid_fp, x, y, rot, layer, descr, tags, properties, pads, attr):
-    """Write a complete footprint block."""
+def pad(pnum, ptype, pshape, x, y, sx, sy, drill, layers, net_id, net_name=None):
+    A(TAB + TAB + TAB + f'(pad "{pnum}" {ptype} {pshape}')
+    A(TAB + TAB + TAB + TAB + f"(at {x:.2f} {y:.2f})")
+    A(TAB + TAB + TAB + TAB + f"(size {sx:.2f} {sy:.2f})")
+    if drill > 0:
+        A(TAB + TAB + TAB + TAB + f"(drill {drill:.2f})")
+    A(TAB + TAB + TAB + TAB + f"(layers {layers})")
+    if net_id > 0:
+        nm = net_name or {v: k for k, v in NETS.items()}.get(net_id, "")
+        A(TAB + TAB + TAB + TAB + f'(net {net_id} "{nm}")')
+    A(TAB + TAB + TAB + TAB + f'(uuid "{U()}")')
+    A(TAB + TAB + TAB + ")")
+
+def footprint_start(libid, fp_uuid, x, y, rot, descr, tags, attr):
     A(TAB + f'(footprint "{libid}"')
-    A(TAB + TAB + f'(layer "{layer}")')
-    A(TAB + TAB + f'(uuid "{uuid_fp}")')
+    A(TAB + TAB + f'(layer "F.Cu")')
+    A(TAB + TAB + f'(uuid "{fp_uuid}")')
     A(TAB + TAB + f"(at {x:.2f} {y:.2f} {rot})")
-    if descr:
-        A(TAB + TAB + f'(descr "{descr}")')
-    if tags:
-        A(TAB + TAB + f'(tags "{tags}")')
-    for pname, pval, px, py, play, hide in properties:
-        A(TAB + TAB + f'(property "{pname}" "{pval}"')
-        A(TAB + TAB + TAB + f"(at {px:.2f} {py:.2f} 0)")
-        A(TAB + TAB + TAB + f'(layer "{play}")')
-        if hide:
-            A(TAB + TAB + TAB + "(hide yes)")
-        A(TAB + TAB + TAB + f'(uuid "{U()}")')
-        A(TAB + TAB + TAB + "(effects (font (size 1 1) (thickness 0.15)))")
-        A(TAB + TAB + ")")
-    if attr:
-        A(TAB + TAB + f"(attr {attr})")
-    for pnum, ptype, pshape, px, py, psx, psy, drill, play, netid in pads:
-        A(TAB + TAB + f'(pad "{pnum}" {ptype} {pshape}')
-        A(TAB + TAB + TAB + f"(at {px:.2f} {py:.2f})")
-        A(TAB + TAB + TAB + f"(size {psx:.2f} {psy:.2f})")
-        if drill > 0:
-            A(TAB + TAB + TAB + f"(drill {drill:.2f})")
-        A(TAB + TAB + TAB + f"(layers {play})")
-        if netid > 0:
-            net_name = {1: "GND", 2: "VCC", 3: "SDA", 4: "SCL", 5: "RDY", 6: "RST"}[netid]
-            A(TAB + TAB + TAB + f'(net {netid} "{net_name}")')
-        A(TAB + TAB + TAB + f'(uuid "{U()}")')
-        A(TAB + TAB + ")")
+    if descr: A(TAB + TAB + f'(descr "{descr}")')
+    if tags:  A(TAB + TAB + f'(tags "{tags}")')
+    if attr:  A(TAB + TAB + f"(attr {attr})")
+
+def footprint_end():
     A(TAB + ")")
 
+# ── JP1 (left row, 12 pins) ──
+footprint_start(HEADER_FP, U(), J1X, P1Y - 5.5 * PP, 0,
+                "Left Pro Micro header", "pin header", "exclude_from_pos_files exclude_from_bom")
+prop("Reference", "JP1", J1X - 3.5, P1Y - 5.5 * PP, "F.SilkS")
+prop("Value", "ProMicro Left", J1X - 3.5, P1Y - 5.5 * PP - 2, "F.Fab", hide=True)
+for pn in range(1, 13):
+    y = (pn - 1) * -PP  # relative to FP centre (pin 1 at top)
+    label = LEFT[pn]
+    net_id = pin_net(label)
+    pad(str(pn), "thru_hole", "circle", 0, y, 1.7, 1.7, 1.0,
+        '"*.Cu" "*.Mask"', net_id)
+footprint_end()
 
-# ── Pin pads (24x single-pin headers) ──
-for prefix, pins, rx in [("JP1", LEFT, J1X), ("JP2", RIGHT, J2X)]:
-    for pn in range(1, 13):
-        y = P1Y - (pn - 1) * PP
-        lb = pins[pn]
-        net = pnet(lb)
-        footprint(
-            libid=PIN_FP,
-            uuid_fp=U(),
-            x=rx, y=y, rot=0, layer="F.Cu",
-            descr=f"Pin {pn}: {lb}",
-            tags="pin header",
-            properties=[
-                ("Reference", f"{prefix}_{pn}", rx, y + 2, "F.SilkS", False),
-                ("Value", lb, rx - 2, y, "F.Fab", True),
-                ("Datasheet", "~", rx, y, "F.Fab", True),
-            ],
-            pads=[
-                ("1", "thru_hole", "circle", 0, 0, 1.7, 1.7, 1.0, '"*.Cu" "*.Mask"', net),
-            ],
-            attr="exclude_from_pos_files exclude_from_bom",
-        )
+# ── JP2 (right row, 12 pins) ──
+footprint_start(HEADER_FP, U(), J2X, P1Y - 5.5 * PP, 0,
+                "Right Pro Micro header", "pin header", "exclude_from_pos_files exclude_from_bom")
+prop("Reference", "JP2", J2X + 2, P1Y - 5.5 * PP, "F.SilkS")
+prop("Value", "ProMicro Right", J2X + 2, P1Y - 5.5 * PP - 2, "F.Fab", hide=True)
+for pn in range(1, 13):
+    y = (pn - 1) * -PP
+    label = RIGHT[pn]
+    net_id = pin_net(label)
+    pad(str(pn), "thru_hole", "circle", 0, y, 1.7, 1.7, 1.0,
+        '"*.Cu" "*.Mask"', net_id)
+footprint_end()
 
 # ── FFC connector ──
-fy = P1Y + 3.0
-ffc_pads = []
-for pi in range(6):
-    px = -1.25 + pi * 0.5
-    nid = [2, 3, 4, 5, 6, 1][pi]
-    ffc_pads.append((str(pi + 1), "smd", "rect", px, 1.0, 0.3, 1.5, 0,
-                      '"F.Cu" "F.Paste" "F.Mask"', nid))
-footprint(
-    libid=FFC_FP,
-    uuid_fp=U(),
-    x=0, y=fy, rot=0, layer="F.Cu",
-    descr="6-pin 0.5mm FFC connector for TPS43",
-    tags="FFC FPC TPS43",
-    properties=[
-        ("Reference", "CON1", 0, fy + 2, "F.SilkS", False),
-        ("Value", "TPS43 FFC", 0, fy + 3.5, "F.Fab", True),
-        ("Datasheet", "~", 0, fy, "F.Fab", True),
-    ],
-    pads=ffc_pads,
-    attr="smd",
-)
+ffc_y = P1Y + 3.0
+footprint_start(FFC_FP, U(), 0, ffc_y, 0,
+                "6-pin 0.5mm FFC for TPS43", "FFC FPC", "smd")
+prop("Reference", "CON1", 0, ffc_y + 2, "F.SilkS")
+prop("Value", "TPS43 FFC", 0, ffc_y + 3.5, "F.Fab", hide=True)
+ffc_map = [(1, NETS["VCC"]), (2, NETS["SDA"]), (3, NETS["SCL"]),
+           (4, NETS["RDY"]), (5, NETS["RST"]), (6, NETS["GND"])]
+for pi, nid in ffc_map:
+    px = -1.25 + (pi - 1) * 0.5
+    pad(str(pi), "smd", "rect", px, 1.0, 0.3, 1.5, 0,
+        '"F.Cu" "F.Paste" "F.Mask"', nid)
+footprint_end()
 
 # ── Resistors ──
-r1_y = fy + 5.0
-r2_y = fy + 2.5
-rrx = J1X + 3.0
-for rname, ry, snet in [("R1", r1_y, 3), ("R2", r2_y, 4)]:
-    footprint(
-        libid=RES_FP,
-        uuid_fp=U(),
-        x=rrx, y=ry, rot=90, layer="F.Cu",
-        descr="2.2k pull-up",
-        tags="resistor 0805",
-        properties=[
-            ("Reference", rname, rrx, ry + 2, "F.SilkS", False),
-            ("Value", "2.2k", rrx, ry - 2, "F.Fab", False),
-            ("Datasheet", "~", rrx, ry, "F.Fab", True),
-        ],
-        pads=[
-            ("1", "smd", "rect", -1.0, 0, 1.2, 1.4, 0, '"F.Cu" "F.Paste" "F.Mask"', snet),
-            ("2", "smd", "rect", 1.0, 0, 1.2, 1.4, 0, '"F.Cu" "F.Paste" "F.Mask"', 2),
-        ],
-        attr="smd",
-    )
-
-# ── Tracks ──
-d8y = P1Y - 10 * PP
-d9y = P1Y - 11 * PP
-d10y = P1Y - 11 * PP
-d16y = P1Y - 10 * PP
-vccy = P1Y - 3 * PP
-gndy = P1Y - 2 * PP
-
-
-NET_NAMES = {1: "GND", 2: "VCC", 3: "SDA", 4: "SCL", 5: "RDY", 6: "RST"}
-
-def TR(x1, y1, x2, y2, w, n):
-    A(TAB + "(segment")
-    A(TAB + TAB + f"(start {x1:.2f} {y1:.2f})")
-    A(TAB + TAB + f"(end {x2:.2f} {y2:.2f})")
-    A(TAB + TAB + f"(width {w:.2f})")
-    A(TAB + TAB + '(layer "F.Cu")')
-    A(TAB + TAB + f"(net {n})")
-    A(TAB + TAB + f'(uuid "{U()}")')
-    A(TAB + ")")
-
-
-segments = [
-    # SDA
-    (J1X, d8y, J1X + 3, d8y, 0.25, 3),
-    (J1X + 3, d8y, J1X + 2, r1_y - 1, 0.25, 3),
-    (J1X + 2, r1_y - 1, rrx - 1, r1_y, 0.25, 3),
-    (J1X + 2, r1_y - 1, -0.75, r1_y - 1, 0.25, 3),
-    (-0.75, r1_y - 1, -0.75, fy, 0.25, 3),
-    # SCL
-    (J1X, d9y, J1X + 3, d9y, 0.25, 4),
-    (J1X + 3, d9y, J1X + 2, r2_y - 1, 0.25, 4),
-    (J1X + 2, r2_y - 1, rrx - 1, r2_y, 0.25, 4),
-    (J1X + 2, r2_y - 1, -0.25, r2_y - 1, 0.25, 4),
-    (-0.25, r2_y - 1, -0.25, fy, 0.25, 4),
-    # RDY
-    (J2X, d10y, 0, d10y, 0.25, 5),
-    (0, d10y, 0, fy + 0.25, 0.25, 5),
-    (0, fy + 0.25, 0.25, fy, 0.25, 5),
-    # RST
-    (J2X, d16y, 0, d16y, 0.25, 6),
-    (0, d16y, 0, fy + 0.75, 0.25, 6),
-    (0, fy + 0.75, 0.75, fy, 0.25, 6),
-    # VCC
-    (J2X, vccy, J1X + 4, vccy, 0.5, 2),
-    (J1X + 4, vccy, J1X + 4, r1_y, 0.5, 2),
-    (J1X + 4, r1_y, rrx + 1, r1_y, 0.5, 2),
-    (J1X + 4, vccy, J1X + 4, r2_y, 0.5, 2),
-    (J1X + 4, r2_y, rrx + 1, r2_y, 0.5, 2),
-    (J1X + 4, vccy, -1.25, vccy, 0.5, 2),
-    (-1.25, vccy, -1.25, fy, 0.5, 2),
-    # GND
-    (J1X, gndy, 1.25, gndy, 0.5, 1),
-    (1.25, gndy, 1.25, fy, 0.5, 1),
-]
-
-for s in segments:
-    TR(*s)
+r1_y = ffc_y + 5.0
+r2_y = ffc_y + 2.5
+rrx = J1X + 4.0
+for rname, ry, src_net in [("R1", r1_y, NETS["SDA"]), ("R2", r2_y, NETS["SCL"])]:
+    footprint_start(RES_FP, U(), rrx, ry, 90,
+                    "2.2kΩ pull-up", "resistor", "smd")
+    prop("Reference", rname, rrx, ry + 2, "F.SilkS")
+    prop("Value", "2.2k", rrx, ry - 2, "F.Fab")
+    pad("1", "smd", "rect", -1.0, 0, 1.2, 1.4, 0,
+        '"F.Cu" "F.Paste" "F.Mask"', src_net)
+    pad("2", "smd", "rect", 1.0, 0, 1.2, 1.4, 0,
+        '"F.Cu" "F.Paste" "F.Mask"', NETS["VCC"])
+    footprint_end()
 
 # ── Board outline ──
-hw = BW / 2
-hh = BH / 2
+hw = BW / 2; hh = BH / 2
 ol = [(-hw, CY + hh), (hw, CY + hh), (hw, CY - hh), (-hw, CY - hh)]
 for i in range(4):
-    x1, y1 = ol[i]
-    x2, y2 = ol[(i + 1) % 4]
+    x1, y1 = ol[i]; x2, y2 = ol[(i + 1) % 4]
     A(TAB + f"(gr_line (start {x1:.2f} {y1:.2f}) (end {x2:.2f} {y2:.2f})"
-      f" (layer \"Edge.Cuts\") (width 0.1) (uuid \"{U()}\"))")
+      f' (layer "Edge.Cuts") (width 0.1) (uuid "{U()}"))')
 
 # ── Silkscreen ──
-silk = [
-    ("Temper TPS43 Interposer", 0, CY + hh - 1.5, "1.0 1.0"),
-    ("v1.0", 0, CY + hh - 2.8, "0.8 0.8"),
-    ("SDA(2)   SCL(3)   RDY(4)   RST(5)", 0, fy - 2.5, "0.8 0.8"),
-    ("VCC(1)                     GND(6)", 0, fy - 3.8, "0.6 0.6"),
-]
-for tx, sx, sy, fs in silk:
+for tx, sx, sy, fs in [
+    ("Temper TPS43 Interposer",  0,       CY + hh - 1.5, "1.0 1.0"),
+    ("v1.0",                     0,       CY + hh - 2.8, "0.8 0.8"),
+    ("SDA  SCL  RDY  RST",       0,       ffc_y - 2.5,   "0.8 0.8"),
+    ("VCC                    GND", 0,     ffc_y - 4.0,   "0.6 0.6"),
+    ("Top: nice!nano   Bottom: Temper", 0, CY - hh + 2,  "0.9 0.9"),
+]:
     A(TAB + f'(gr_text "{tx}" (at {sx:.2f} {sy:.2f} 0) (layer "F.SilkS")'
       f" (effects (font (size {fs}) (thickness 0.15))) (uuid \"{U()}\"))")
 
-for i in range(12):
-    y = P1Y - i * PP
-    lb = LEFT[i + 1]
-    if lb in ("D8", "D9", "GND"):
-        A(TAB + f'(gr_text "{lb}" (at {J1X - 2.5:.2f} {y:.2f} 0)'
-          f' (layer "F.SilkS") (effects (font (size 0.6 0.6) (thickness 0.075))) (uuid "{U()}"))')
-    rb = RIGHT[i + 1]
-    if rb in ("D10", "D16", "VCC"):
-        A(TAB + f'(gr_text "{rb}" (at {J2X + 2.5:.2f} {y:.2f} 0)'
-          f' (layer "F.SilkS") (effects (font (size 0.6 0.6) (thickness 0.075))) (uuid "{U()}"))')
+# Tap labels near relevant pins
+tap_labels = [
+    ("D8",  J1X - 2.5, P1Y - 10 * PP),
+    ("D9",  J1X - 2.5, P1Y - 11 * PP),
+    ("D10", J2X + 2.5, P1Y - 11 * PP),
+    ("D16", J2X + 2.5, P1Y - 10 * PP),
+    ("VCC", J2X + 2.5, P1Y -  3 * PP),
+    ("GND", J1X - 2.5, P1Y -  2 * PP),
+]
+for lb, tx, ty in tap_labels:
+    A(TAB + f'(gr_text "{lb}" (at {tx:.2f} {ty:.2f} 0) (layer "F.SilkS")'
+      f" (effects (font (size 0.6 0.6) (thickness 0.075))) (uuid \"{U()}\"))")
 
 A(TAB + "(embedded_fonts no)")
 A(")")
@@ -349,5 +275,8 @@ if __name__ == "__main__":
     with open(OUT, "w") as f:
         f.write(content)
     print(f"Generated {OUT} ({len(content)} bytes)")
-    print(f"Footprints reference: {PIN_FP}, {RES_FP}, {FFC_FP}")
-    print(f"Board outline: {BW:.0f}x{BH:.0f}mm")
+    print(f"Headers:  JP1 (left, 12 pins), JP2 (right, 12 pins)")
+    print(f"FFC:     CON1 ({ffc_y:.1f} mm from centre)")
+    print(f"Resistors: R1 (SDA→VCC), R2 (SCL→VCC)")
+    print(f"Board:   {BW:.0f}×{BH:.0f} mm")
+    print(f"  → Run KiCad interactive router to connect tapped pins to FFC & resistors.")
