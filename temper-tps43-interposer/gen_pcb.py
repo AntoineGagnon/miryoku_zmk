@@ -170,7 +170,8 @@ def footprint(libid, uuid_fp, x, y, rot, layer, descr, tags, properties, pads, a
             A(TAB + TAB + TAB + f"(drill {drill:.2f})")
         A(TAB + TAB + TAB + f"(layers {play})")
         if netid > 0:
-            A(TAB + TAB + TAB + f"(net {netid})")
+            net_name = {1: "GND", 2: "VCC", 3: "SDA", 4: "SCL", 5: "RDY", 6: "RST"}[netid]
+            A(TAB + TAB + TAB + f'(net {netid} "{net_name}")')
         A(TAB + TAB + TAB + f'(uuid "{U()}")')
         A(TAB + TAB + ")")
     A(TAB + ")")
@@ -254,9 +255,11 @@ vccy = P1Y - 3 * PP
 gndy = P1Y - 2 * PP
 
 
+NET_NAMES = {1: "GND", 2: "VCC", 3: "SDA", 4: "SCL", 5: "RDY", 6: "RST"}
+
 def TR(x1, y1, x2, y2, w, n):
     A(TAB + f"(segment (start {x1:.2f} {y1:.2f}) (end {x2:.2f} {y2:.2f})"
-      f" (width {w:.2f}) (layer \"F.Cu\") (net {n}) (uuid \"{U()}\"))")
+      f" (width {w:.2f}) (layer \"F.Cu\") (net {n} \"{NET_NAMES[n]}\") (uuid \"{U()}\"))")
 
 
 segments = [
@@ -332,10 +335,10 @@ A(TAB + "(embedded_fonts no)")
 A(")")
 
 # ── Write ──
-content = "\n".join(lines) + "\n"
-with open(OUT, "w") as f:
-    f.write(content)
-
-print(f"Generated {OUT} ({len(content)} bytes)")
-print(f"Footprints reference: {PIN_FP}, {RES_FP}, {FFC_FP}")
-print(f"Board outline: {BW:.0f}x{BH:.0f}mm")
+if __name__ == "__main__":
+    content = "\n".join(lines) + "\n"
+    with open(OUT, "w") as f:
+        f.write(content)
+    print(f"Generated {OUT} ({len(content)} bytes)")
+    print(f"Footprints reference: {PIN_FP}, {RES_FP}, {FFC_FP}")
+    print(f"Board outline: {BW:.0f}x{BH:.0f}mm")
