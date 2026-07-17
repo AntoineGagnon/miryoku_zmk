@@ -258,8 +258,14 @@ gndy = P1Y - 2 * PP
 NET_NAMES = {1: "GND", 2: "VCC", 3: "SDA", 4: "SCL", 5: "RDY", 6: "RST"}
 
 def TR(x1, y1, x2, y2, w, n):
-    A(TAB + f"(segment (start {x1:.2f} {y1:.2f}) (end {x2:.2f} {y2:.2f})"
-      f" (width {w:.2f}) (layer \"F.Cu\") (net {n} \"{NET_NAMES[n]}\") (uuid \"{U()}\"))")
+    A(TAB + "(segment")
+    A(TAB + TAB + f"(start {x1:.2f} {y1:.2f})")
+    A(TAB + TAB + f"(end {x2:.2f} {y2:.2f})")
+    A(TAB + TAB + f"(width {w:.2f})")
+    A(TAB + TAB + '(layer "F.Cu")')
+    A(TAB + TAB + f'(net {n} "{NET_NAMES[n]}")')
+    A(TAB + TAB + f'(uuid "{U()}")')
+    A(TAB + ")")
 
 
 segments = [
