@@ -154,18 +154,13 @@ def prop(name, value, x, y, layer, hide=False):
     A(TAB + TAB + TAB + "(effects (font (size 1 1) (thickness 0.15)))")
     A(TAB + TAB + ")")
 
-def pad(pnum, ptype, pshape, x, y, sx, sy, drill, layers, net_id, net_name=None):
-    A(TAB + TAB + TAB + f'(pad "{pnum}" {ptype} {pshape}')
-    A(TAB + TAB + TAB + TAB + f"(at {x:.2f} {y:.2f})")
-    A(TAB + TAB + TAB + TAB + f"(size {sx:.2f} {sy:.2f})")
-    if drill > 0:
-        A(TAB + TAB + TAB + TAB + f"(drill {drill:.2f})")
-    A(TAB + TAB + TAB + TAB + f"(layers {layers})")
+def pad_net(pnum, net_id):
+    """Set net on an existing library pad — no geometry override."""
     if net_id > 0:
-        nm = net_name or {v: k for k, v in NETS.items()}.get(net_id, "")
-        A(TAB + TAB + TAB + TAB + f'(net {net_id} "{nm}")')
-    A(TAB + TAB + TAB + TAB + f'(uuid "{U()}")')
-    A(TAB + TAB + TAB + ")")
+        nm = {v: k for k, v in NETS.items()}.get(net_id, "")
+        A(TAB + TAB + TAB + f'(pad "{pnum}" (net {net_id} "{nm}"))')
+    else:
+        A(TAB + TAB + TAB + f'(pad "{pnum}" (net 0 ""))')
 
 def footprint_start(libid, fp_uuid, x, y, rot, descr, tags, attr):
     A(TAB + f'(footprint "{libid}"')
@@ -188,8 +183,7 @@ for pn in range(1, 13):
     y = (pn - 1) * -PP  # relative to FP centre (pin 1 at top)
     label = LEFT[pn]
     net_id = pin_net(label)
-    pad(str(pn), "thru_hole", "circle", 0, y, 1.7, 1.7, 1.0,
-        '"*.Cu" "*.Mask"', net_id)
+    pad_net(str(pn), net_id)
 footprint_end()
 
 # ── JP2 (right row, 12 pins) ──
@@ -201,8 +195,7 @@ for pn in range(1, 13):
     y = (pn - 1) * -PP
     label = RIGHT[pn]
     net_id = pin_net(label)
-    pad(str(pn), "thru_hole", "circle", 0, y, 1.7, 1.7, 1.0,
-        '"*.Cu" "*.Mask"', net_id)
+    pad_net(str(pn), net_id)
 footprint_end()
 
 # ── FFC connector ──
@@ -214,9 +207,7 @@ prop("Value", "TPS43 FFC", 0, ffc_y + 3.5, "F.Fab", hide=True)
 ffc_map = [(1, NETS["VCC"]), (2, NETS["SDA"]), (3, NETS["SCL"]),
            (4, NETS["RDY"]), (5, NETS["RST"]), (6, NETS["GND"])]
 for pi, nid in ffc_map:
-    px = -1.25 + (pi - 1) * 0.5
-    pad(str(pi), "smd", "rect", px, 1.0, 0.3, 1.5, 0,
-        '"F.Cu" "F.Paste" "F.Mask"', nid)
+    pad_net(str(pi), nid)
 footprint_end()
 
 # ── Resistors ──
@@ -228,10 +219,8 @@ for rname, ry, src_net in [("R1", r1_y, NETS["SDA"]), ("R2", r2_y, NETS["SCL"])]
                     "2.2kΩ pull-up", "resistor", "smd")
     prop("Reference", rname, rrx, ry + 2, "F.SilkS")
     prop("Value", "2.2k", rrx, ry - 2, "F.Fab")
-    pad("1", "smd", "rect", -1.0, 0, 1.2, 1.4, 0,
-        '"F.Cu" "F.Paste" "F.Mask"', src_net)
-    pad("2", "smd", "rect", 1.0, 0, 1.2, 1.4, 0,
-        '"F.Cu" "F.Paste" "F.Mask"', NETS["VCC"])
+    pad_net("1", src_net)
+    pad_net("2", NETS["VCC"])
     footprint_end()
 
 # ── Board outline ──
