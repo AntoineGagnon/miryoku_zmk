@@ -263,7 +263,7 @@ def TR(x1, y1, x2, y2, w, n):
     A(TAB + TAB + f"(end {x2:.2f} {y2:.2f})")
     A(TAB + TAB + f"(width {w:.2f})")
     A(TAB + TAB + '(layer "F.Cu")')
-    A(TAB + TAB + f'(net {n} "{NET_NAMES[n]}")')
+    A(TAB + TAB + f"(net {n})")
     A(TAB + TAB + f'(uuid "{U()}")')
     A(TAB + ")")
 
