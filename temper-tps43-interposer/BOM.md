@@ -2,36 +2,37 @@
 
 ## Option A: Custom PCB Route (recommended)
 
-| Qty | Part | digikey.ca Link | ~Price |
-|-----|------|-----------------|--------|
+| Qty | Part | Link | ~Price |
+|-----|------|------|--------|
 | 1 | TPS43-201A-B trackpad module | https://www.digikey.ca/en/products/detail/azoteq-pty-ltd/TPS43-201A-B/7101305 | $18.50 |
 | 1 | Molex 5034800600 FFC connector, 6-pos, 0.5mm, RA | https://www.digikey.ca/en/products/detail/molex/5034800600/2356622 | $0.75 |
-| 1 | FFC cable: 6-pos, 0.5mm pitch, ~100mm, Type A *(see note)* | https://www.digikey.ca/en/products/filter/flat-flex-ribbon-jumpers-cables/458?s=N4IgTCBcDaIDYFMwHYCcBaADAUkgFkBaDEEAXQF8g | $3-5 |
-| 2 | 12-pin female socket header, 2.54mm pitch | https://www.digikey.ca/en/products/detail/sullins-connector-solutions/PPPC121LFBN-RC/810200 | $2 |
-| 2 | 12-pin male pin header, 2.54mm pitch | https://www.digikey.ca/en/products/detail/sullins-connector-solutions/PRPC012SAAN-RC/2775404 | $1 |
-| 2 | 2.2kΩ 0805 SMD resistor | https://www.digikey.ca/en/products/detail/yageo/RC0805FR-072K2L/727829 | $0.10 |
+| 1 | FFC cable, 6-pos, 0.5mm, Type A, 50–150mm | https://www.digikey.ca/en/products/filter/flat-flex-ribbon-jumpers-cables/458 | $3–5 |
+| 2 | 12-pin male pin header, 2.54mm, breakaway | https://www.digikey.ca/en/products/detail/molex/0010897122/851738 | $1 |
+| 2 | 12-pin female socket header, 2.54mm | https://www.digikey.ca/en/products/filter/rectangular-connectors/headers-receptacles-female-sockets/315 | $2 |
+| 2 | 2.2kΩ 0805 SMD resistor (±5% or ±1%) | https://www.digikey.ca/en/products/detail/yageo/RC0805FR-072K2P/17018916 | $0.10 |
 | 5 | Custom PCBs (JLCPCB) | Upload `temper-tps43-interposer.kicad_pcb` | ~$5 |
 | | | **Total** | **~$32** |
 
-> **FFC cable requirements**: 6 positions, 0.5mm pitch, Type A (contacts on same side of cable at both ends), 50–150mm length.
-> The TPS43 ships with an FFC cable in some kits — check before ordering a separate one. If buying from Digikey, use the filter link above and select: `Number of Conductors = 6`, `Pitch = 0.020" (0.50mm)`, `Length = 2.000" (50.80mm) to 6.000" (152.40mm)`.
+> **FFC cable**: Filter by `Number of Conductors = 6`, `Pitch = 0.020" (0.50mm)`, pick any 50–150mm length. Type A = contacts on same side. Some TPS43 kits include a cable — check first.
 >
-> **JLCPCB specs**: 2 layers, 1.0mm thickness, ENIG finish (recommended for the fine-pitch FFC pads).
+> **Headers**: Buy 40-pin breakaway strips and snap off 12-pin sections. Cheaper per pin. Any generic 2.54mm single-row male/female header works.
+>
+> **Resistors**: Any 0805 2.2kΩ thick-film SMD works. ±5% is fine; ±1% linked for reference.
+>
+> **JLCPCB**: 2 layers, 1.0mm thickness, ENIG finish.
 
 ---
 
 ## Option B: Breadboard / Hand-Wired Route
 
-No custom PCB required. Wire everything point-to-point on perfboard.
-
-| Qty | Part | digikey.ca Link | ~Price |
-|-----|------|-----------------|--------|
+| Qty | Part | Link | ~Price |
+|-----|------|------|--------|
 | 1 | TPS43-201A-B trackpad module | ^ same as above | $18.50 |
 | 1 | Molex 5034800600 FFC connector | ^ same as above | $0.75 |
-| 1 | FFC cable, 6-pos, 0.5mm, ~100mm, Type A | ^ see filter link above | $3-5 |
+| 1 | FFC cable, 6-pos, 0.5mm, Type A, 50–150mm | ^ see filter link above | $3–5 |
 | 1 | Protoboard / perfboard (~50×70mm) | https://www.digikey.ca/en/products/detail/busboard-prototype-systems/ST3U/17439370 | $3 |
-| 2 | 2.2kΩ through-hole resistor (1/4W) | https://www.digikey.ca/en/products/detail/yageo/CFR-25JB-52-2K2/2686 | $0.20 |
-| 1 | Hookup wire, solid-core, 22-28 AWG | https://www.digikey.ca/en/products/detail/adafruit-industries-llc/1311/10094919 | $4 |
+| 2 | 2.2kΩ through-hole resistor, 1/4W | https://www.digikey.ca/en/products/detail/yageo/CFR-25JB-52-2K2/2686 | $0.20 |
+| 1 | Hookup wire, solid-core, 22–28 AWG | https://www.digikey.ca/en/products/detail/adafruit-industries-llc/1311/10094919 | $4 |
 | — | Soldering iron + solder | Whatever you have | — |
 | | | **Total** | **~$31** |
 
