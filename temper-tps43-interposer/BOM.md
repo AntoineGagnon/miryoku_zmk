@@ -1,37 +1,39 @@
-# TPS43 Trackpad — Shopping List (Digikey)
+# TPS43 Trackpad — Shopping List (digikey.ca)
 
 ## Option A: Custom PCB Route (recommended)
 
-| Qty | Part | Digikey PN | Link | ~Price |
-|-----|------|-----------|------|--------|
-| 1 | TPS43-201A-B trackpad module | 1790-1015-ND | https://www.digikey.com/en/products/detail/azoteq-pty-ltd/TPS43-201A-B/7101305 | $18.50 |
-| 1 | Molex 503480-0600 FFC connector, 6-pin, 0.5mm, RA | WM14219CT-ND | https://www.digikey.com/en/products/detail/molex/5034800600/2356622 | $0.75 |
-| 1 | FFC cable, 6-pin, 0.5mm, 100mm, Type A (same-side contacts) | WM14348-ND | https://www.digikey.com/en/products/detail/molex/0151660603/3888092 | $2.50 |
-| 2 | 12-pin female socket header, 2.54mm | S7008-ND | https://www.digikey.com/en/products/detail/sullins-connector-solutions/PPPC121LFBN-RC/810200 | $1.80 |
-| 2 | 12-pin male pin header, 2.54mm | S2011E-12-ND | https://www.digikey.com/en/products/detail/sullins-connector-solutions/PRPC012SAAN-RC/2775404 | $0.60 |
-| 2 | 2.2kΩ 0805 SMD resistor | 311-2.20KARCT-ND | https://www.digikey.com/en/products/detail/yageo/RC0805FR-072K2L/727829 | $0.10 |
-| 5 | Custom PCBs (JLCPCB) | — | Upload `temper-tps43-interposer.kicad_pcb` | ~$5 |
-| | | | **Total** | **~$30** |
+| Qty | Part | digikey.ca Link | ~Price |
+|-----|------|-----------------|--------|
+| 1 | TPS43-201A-B trackpad module | https://www.digikey.ca/en/products/detail/azoteq-pty-ltd/TPS43-201A-B/7101305 | $18.50 |
+| 1 | Molex 5034800600 FFC connector, 6-pos, 0.5mm, RA | https://www.digikey.ca/en/products/detail/molex/5034800600/2356622 | $0.75 |
+| 1 | FFC cable: 6-pos, 0.5mm pitch, ~100mm, Type A *(see note)* | https://www.digikey.ca/en/products/filter/flat-flex-ribbon-jumpers-cables/458?s=N4IgTCBcDaIDYFMwHYCcBaADAUkgFkBaDEEAXQF8g | $3-5 |
+| 2 | 12-pin female socket header, 2.54mm pitch | https://www.digikey.ca/en/products/detail/sullins-connector-solutions/PPPC121LFBN-RC/810200 | $2 |
+| 2 | 12-pin male pin header, 2.54mm pitch | https://www.digikey.ca/en/products/detail/sullins-connector-solutions/PRPC012SAAN-RC/2775404 | $1 |
+| 2 | 2.2kΩ 0805 SMD resistor | https://www.digikey.ca/en/products/detail/yageo/RC0805FR-072K2L/727829 | $0.10 |
+| 5 | Custom PCBs (JLCPCB) | Upload `temper-tps43-interposer.kicad_pcb` | ~$5 |
+| | | **Total** | **~$32** |
 
-> **Note on FFC cable**: The linked Molex 0151660603 is a 152mm cable. Any 6-pin 0.5mm Type A (same-side contacts) FFC cable 50-150mm long works.
-> For JLCPCB PCB ordering: 2 layers, 1.0mm thickness, ENIG finish.
+> **FFC cable requirements**: 6 positions, 0.5mm pitch, Type A (contacts on same side of cable at both ends), 50–150mm length.
+> The TPS43 ships with an FFC cable in some kits — check before ordering a separate one. If buying from Digikey, use the filter link above and select: `Number of Conductors = 6`, `Pitch = 0.020" (0.50mm)`, `Length = 2.000" (50.80mm) to 6.000" (152.40mm)`.
+>
+> **JLCPCB specs**: 2 layers, 1.0mm thickness, ENIG finish (recommended for the fine-pitch FFC pads).
 
 ---
 
 ## Option B: Breadboard / Hand-Wired Route
 
-No custom PCB required. You wire everything point-to-point on perfboard.
+No custom PCB required. Wire everything point-to-point on perfboard.
 
-| Qty | Part | Digikey PN | Link | ~Price |
-|-----|------|-----------|------|--------|
-| 1 | TPS43-201A-B trackpad module | 1790-1015-ND | ^ same as above | $18.50 |
-| 1 | Molex 503480-0600 FFC connector, 6-pin, 0.5mm, RA | WM14219CT-ND | ^ same as above | $0.75 |
-| 1 | FFC cable, 6-pin, 0.5mm, 100mm, Type A | WM14348-ND | ^ same as above | $2.50 |
-| 1 | Protoboard / perfboard (50×70mm) | V2018-ND | https://www.digikey.com/en/products/detail/vector-electronics/8016/1358063 | $5.00 |
-| 2 | 2.2kΩ through-hole resistor (1/4W) | 2.20KXBK-ND | https://www.digikey.com/en/products/detail/yageo/CFR-25JB-52-2K2/2686 | $0.20 |
-| 1 | Hookup wire, 28AWG, assorted (solid core) | 1528-1877-ND | https://www.digikey.com/en/products/detail/adafruit-industries-llc/3173/10238156 | $4.00 |
-| 1 | Soldering iron + solder | — | Whatever you have | — |
-| | | | **Total** | **~$31** |
+| Qty | Part | digikey.ca Link | ~Price |
+|-----|------|-----------------|--------|
+| 1 | TPS43-201A-B trackpad module | ^ same as above | $18.50 |
+| 1 | Molex 5034800600 FFC connector | ^ same as above | $0.75 |
+| 1 | FFC cable, 6-pos, 0.5mm, ~100mm, Type A | ^ see filter link above | $3-5 |
+| 1 | Protoboard / perfboard (~50×70mm) | https://www.digikey.ca/en/products/detail/busboard-prototype-systems/ST3U/17439370 | $3 |
+| 2 | 2.2kΩ through-hole resistor (1/4W) | https://www.digikey.ca/en/products/detail/yageo/CFR-25JB-52-2K2/2686 | $0.20 |
+| 1 | Hookup wire, solid-core, 22-28 AWG | https://www.digikey.ca/en/products/detail/adafruit-industries-llc/1311/10094919 | $4 |
+| — | Soldering iron + solder | Whatever you have | — |
+| | | **Total** | **~$31** |
 
 ### Hand-wiring approach
 
