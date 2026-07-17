@@ -16,8 +16,11 @@ RS = 15.24
 P1Y = 12.7
 J1X = -RS / 2
 J2X = RS / 2
+# Board dimensions — must encompass all pins + FFC + resistors
 BW = 34.0
-BH = 20.0
+BH = 44.0
+# Center Y so that the pin area is centered on the board
+CY = 1.5  # board Y center offset (positive shifts board up to cover FFC/resistors)
 
 LEFT = {
     1: "D1", 2: "D0", 3: "GND", 4: "GND", 5: "D2", 6: "D3",
@@ -206,7 +209,7 @@ ffc_pads = []
 for pi in range(6):
     px = -1.25 + pi * 0.5
     nid = [2, 3, 4, 5, 6, 1][pi]
-    ffc_pads.append((str(pi + 1), "smd", "rect", px, 0, 0.3, 1.5, 0,
+    ffc_pads.append((str(pi + 1), "smd", "rect", px, 1.0, 0.3, 1.5, 0,
                       '"F.Cu" "F.Paste" "F.Mask"', nid))
 footprint(
     libid=FFC_FP,
@@ -308,7 +311,7 @@ for s in segments:
 # ── Board outline ──
 hw = BW / 2
 hh = BH / 2
-ol = [(-hw, hh), (hw, hh), (hw, -hh), (-hw, -hh)]
+ol = [(-hw, CY + hh), (hw, CY + hh), (hw, CY - hh), (-hw, CY - hh)]
 for i in range(4):
     x1, y1 = ol[i]
     x2, y2 = ol[(i + 1) % 4]
@@ -317,8 +320,8 @@ for i in range(4):
 
 # ── Silkscreen ──
 silk = [
-    ("Temper TPS43 Interposer", 0, hh - 1.5, "1.0 1.0"),
-    ("v1.0", 0, hh - 2.8, "0.8 0.8"),
+    ("Temper TPS43 Interposer", 0, CY + hh - 1.5, "1.0 1.0"),
+    ("v1.0", 0, CY + hh - 2.8, "0.8 0.8"),
     ("SDA(2)   SCL(3)   RDY(4)   RST(5)", 0, fy - 2.5, "0.8 0.8"),
     ("VCC(1)                     GND(6)", 0, fy - 3.8, "0.6 0.6"),
 ]
