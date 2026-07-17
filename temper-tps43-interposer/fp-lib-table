@@ -1,0 +1,6 @@
+(fp_lib_table
+  (lib (name "temper-tps43-interposer")(type "KiCad")(uri "/home/antoine/src/miryoku_zmk/temper-tps43-interposer/temper-tps43-interposer.pretty")(options "")(descr "Custom footprints for Temper TPS43 Interposer"))
+  (lib (name "Connector_PinHeader_2.54mm")(type "KiCad")(uri "/usr/share/kicad/footprints/Connector_PinHeader_2.54mm.pretty")(options "")(descr ""))
+  (lib (name "Connector_PinSocket_2.54mm")(type "KiCad")(uri "/usr/share/kicad/footprints/Connector_PinSocket_2.54mm.pretty")(options "")(descr ""))
+  (lib (name "Resistor_SMD")(type "KiCad")(uri "/usr/share/kicad/footprints/Resistor_SMD.pretty")(options "")(descr ""))
+)
