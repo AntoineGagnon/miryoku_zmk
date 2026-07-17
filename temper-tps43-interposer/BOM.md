@@ -4,7 +4,7 @@
 
 | Qty | Part | Link | ~Price |
 |-----|------|------|--------|
-| 1 | TPS43-201A-B trackpad module | https://www.digikey.ca/en/products/detail/azoteq-pty-ltd/TPS43-201A-B/7101305 | $18.50 |
+| 1 | TPS43-201A-S trackpad module | https://www.digikey.ca/en/products/detail/azoteq-pty-ltd/TPS43-201A-S/7164940 | $18.50 |
 | 1 | Molex 5034800600 FFC connector, 6-pos, 0.5mm, RA | https://www.digikey.ca/en/products/detail/molex/5034800600/2356622 | $0.75 |
 | 1 | FFC jumper cable, 6-pos, 0.5mm, Type A, 51mm | https://www.digikey.ca/en/products/detail/assmann-wsw-components/AFFC-050-06-051-11/6570241 | $4 |
 | 2 | 12-pin male pin header, 2.54mm, breakaway | https://www.digikey.ca/en/products/detail/molex/0010897122/851738 | $1 |
@@ -27,7 +27,7 @@
 
 | Qty | Part | Link | ~Price |
 |-----|------|------|--------|
-| 1 | TPS43-201A-B trackpad module | ^ same as above | $18.50 |
+| 1 | TPS43-201A-S trackpad module | ^ same as above | $18.50 |
 | 1 | Molex 5034800600 FFC connector | ^ same as above | $0.75 |
 | 1 | FFC jumper cable, 6-pos, 0.5mm, Type A, 51mm | ^ same as above | $4 |
 | 1 | Protoboard / perfboard (~50×70mm) | https://www.digikey.ca/en/products/detail/busboard-prototype-systems/ST3U/17439370 | $3 |
