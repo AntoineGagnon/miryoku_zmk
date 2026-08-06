@@ -1,0 +1,4 @@
+Ref,Val,Package,PosX,PosY,Rot,Side
+"CON1","FFC 1x06 0.5mm","Hirose_FH12-6S-0.5SH_1x06-1MP_P0.50mm_Horizontal",100.000000,-80.850000,0.000000,top
+"R1","2.2k","R_0805_2012Metric",91.500000,-83.400000,-90.000000,top
+"R2","2.2k","R_0805_2012Metric",102.500000,-93.000000,-90.000000,top

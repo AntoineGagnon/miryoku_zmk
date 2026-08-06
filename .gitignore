@@ -1,1 +1,13 @@
 temper-tps43-interposer/__pycache__/
+
+# KiCad 10's own "Local History" autosave directory, plus the nested git repo it keeps there.
+temper-tps43-interposer/.history/
+
+# Per-user KiCad UI state (open layers, zoom, selection filters). Not part of the design.
+temper-tps43-interposer/*.kicad_prl
+
+# Editor backups and rescue libraries KiCad writes next to the project.
+temper-tps43-interposer/*-backups/
+temper-tps43-interposer/*.kicad_pcb-bak
+temper-tps43-interposer/*.kicad_sch-bak
+temper-tps43-interposer/fp-info-cache
