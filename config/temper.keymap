@@ -8,15 +8,25 @@
 / {
   combos {
     compatible = "zmk,combos";
-    combo_esc_space_f20 {
+    combo_esc_space_f14 {
       timeout-ms = <50>;
-      key-positions = <32 33>;
-      bindings = <&kp F20>;
+      key-positions = <30 31>;
+      bindings = <&kp F14>;
     };
-    combo_space_tab_f21 {
+    combo_space_tab_f15 {
+      timeout-ms = <50>;
+      key-positions = <31 32>;
+      bindings = <&kp F15>;
+    };
+    combo_enter_bspc_f16 {
       timeout-ms = <50>;
       key-positions = <33 34>;
-      bindings = <&kp F21>;
+      bindings = <&kp F16>;
+    };
+    combo_bspc_del_f17 {
+      timeout-ms = <50>;
+      key-positions = <34 35>;
+      bindings = <&kp F17>;
     };
   };
 };
